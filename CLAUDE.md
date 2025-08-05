@@ -2,152 +2,155 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+This is an ambient advertising platform that automatically generates contextual promotional scripts and audio content based on real-time environmental conditions (weather, time, etc.). The system combines AI-powered script generation, voice synthesis, and condition-based triggers to deliver relevant advertising in physical locations.
+
+## Architecture
+
+### Full-Stack Structure
+- **Frontend**: React + TypeScript with Vite, using Radix UI components and Tailwind CSS
+- **Backend**: Express.js + TypeScript server with PostgreSQL database
+- **Database**: PostgreSQL with Drizzle ORM for schema management
+- **Authentication**: Session-based auth with PostgreSQL session store
+- **AI Services**: Google Gemini for script generation, ElevenLabs for voice synthesis
+- **Workers**: Background services for data ingestion and trigger processing
+
+### Key Directories
+- `client/src/` - React frontend application
+- `server/` - Express backend with API routes and services
+- `shared/` - Shared TypeScript schemas and types
+- `server/services/` - Business logic services (AI, audio, conditions)
+- `server/workers/` - Background processing workers
+
 ## Development Commands
 
+### Database Operations
 ```bash
-npm run dev        # Start development server (tsx + Vite) on port 5000
-npm run build      # Production build (Vite frontend + esbuild backend)
-npm run start      # Run production build
-npm run check      # TypeScript compilation check
-npm run db:push    # Apply database schema changes with Drizzle Kit
-
-# Database Seeding
-npm run seed       # Seed database with initial data
-npm run seed:force # Force reseed with new data (overwrites existing)
-npm run seed:fresh # Push schema then seed database
-
-# Docker Operations
-npm run docker:dev         # Start development environment with Docker
-npm run docker:dev-nocache # Rebuild dev environment without cache
-npm run docker:prod        # Start production environment
-npm run docker:tools       # Start supporting tools (PostgreSQL)
-npm run docker:db          # Start only PostgreSQL container
-npm run docker:stop        # Stop all containers
-npm run docker:clean       # Remove containers and volumes
-npm run docker:logs        # Follow development container logs
-npm run docker:shell       # Access development container shell
+npm run db:push                    # Push schema changes to database
+npm run seed                       # Seed database with sample data
+npm run seed:force                 # Force reseed with fresh data
+npm run seed:fresh                 # Push schema + seed in one command
 ```
 
-## System Architecture
+### Development & Building
+```bash
+npm run dev                        # Start development server (port 5000)
+npm run build                      # Build for production
+npm run start                      # Start production server
+npm run check                      # TypeScript type checking
+```
 
-This is a sophisticated **USEA Ambient Advertising Platform** that operates as a dual-system:
+### Docker Development
+```bash
+npm run docker:dev                 # Start development with Docker
+npm run docker:db                  # Start only PostgreSQL database
+npm run docker:stop               # Stop all Docker services
+npm run docker:clean              # Clean up containers and volumes
+```
 
-1. **Music Management System** - Original playlist and jingle management functionality
-2. **AI-Powered Ambient Advertising System** - Contextual ad triggering based on real-time Singapore environmental data
+## Database Schema
 
-### Technology Stack
-- **Backend**: Node.js/Express with TypeScript (ES modules), PostgreSQL with Drizzle ORM (Neon serverless)
-- **Frontend**: React 18 + Vite, Wouter routing, Shadcn/ui components, Tailwind CSS
-- **AI Integration**: OpenAI GPT-4o for script generation
-- **Background Processing**: Multi-worker architecture with health monitoring
+### Core Tables
+- `advertisers` - Business clients with budgets and spending tracking
+- `conditionRules` - Environmental trigger conditions (weather, time-based)
+- `audio` - Generated scripts and synthesized audio files
+- `adTriggers` - Log of triggered advertisements with costs
+- `governmentData` - Weather and environmental data storage
+- `venues` - Physical locations where ads are played
+- `contractTemplates` - Pricing tier templates
+- `advertiserContracts` - Billing contracts with advertisers
+- `users` - Authentication and user management
 
-### Database Schema (16 tables)
-The system uses a sophisticated PostgreSQL schema with three main domains:
+### Key Relationships
+- Advertisers have multiple condition rules and billing contracts
+- Condition rules trigger audio generation when environmental conditions match
+- Ad triggers track costs and associate with advertisers, locations, and audio content
 
-**Core Ambient Advertising**: `governmentData`, `advertisers`, `conditionRules`, `locations`, `scripts`, `voiceovers`, `adTriggers`, `systemHealth`
+## Authentication System
 
-**Business Logic**: `venues`, `contractTemplates`, `advertiserContracts`, `venueContracts`, `billingRecords`, `payoutRecords`
+### Default Accounts (Change in Production)
+- **admin/admin123** - Administrator access
+- **demo/demo123** - Demo user
+- **manager/manager123** - Campaign manager
 
-**Legacy Music System**: `brands`, `jingles` (minimal usage)
+### Route Protection
+- Admin routes: `/api/workers/*` (worker management)
+- Protected routes: Most `/api/v1/*` endpoints require authentication
+- Public routes: `/api/health`, `/api/login`, `/api/register`, `/api/logout`
 
-Key schema file: `shared/schema.ts`
+## AI Services Architecture
 
-### Worker System Architecture
-The system implements background workers managed by `WorkerManager` in `server/workers/`:
+### Script Generation
+- **Service**: `server/services/geminiScriptService.ts`
+- **Model**: Google Gemini 1.5 Flash
+- **Function**: Generates contextual promotional scripts based on business type and environmental conditions
 
-- **Data Ingestion Worker**: Fetches Singapore government data every 5 minutes (weather, air quality, traffic, floods)
-- **Trigger Engine Worker**: Evaluates condition rules hourly, handles billing and budget constraints  
-- **Voice Synthesis Worker**: Queue-based processing for AI-generated audio content
-
-Worker controls available at `/api/workers/*` endpoints.
-
-### API Structure
-RESTful APIs in `server/routes.ts` organized by domain:
-- Worker management: `/api/workers/*`
-- Government data: `/api/v1/fetch-government-data`
-- Advertisers: `/api/v1/advertisers/*`
-- Contracts: `/api/v1/contract-templates/*`, `/api/v1/advertiser-contracts/*`
-- Billing: `/api/v1/billing-records/*`, `/api/v1/payout-records/*`
-- Rules: `/api/v1/condition-rules/*`
-- Analytics: `/api/v1/report`
-- Audio: `/api/voiceovers/*`
-
-### Frontend Routing
-Main application in `client/src/App.tsx` with dashboard layout. Key routes:
-- `/brands` - Legacy music management
-- `/workers` - Real-time worker monitoring
-- `/advertisers` - Account and balance management
-- `/contracts` - Contract templates and assignments
-- `/analytics` - Performance reporting
-- `/rules` - Condition rule builder
-- `/audio` - Voiceover library
-
-### Configuration Files
-- **Path aliases**: `@/*` → client src, `@shared/*` → shared schema
-- **Database**: `drizzle.config.ts` for schema management
-- **Build**: `vite.config.ts` (client), esbuild config in package.json (server)
-- **Environment**: Requires `DATABASE_URL`, `SESSION_SECRET`, `NODE_ENV`
-
-## Key Business Logic
-
-### Contract-Based Billing System
-Three billing models in `advertiserContracts`:
-- **Monthly Fixed**: Flat rate regardless of triggers
-- **Per-Trigger**: Pay per advertisement played
-- **Hybrid**: Fixed base + per-trigger costs
-
-Budget controls with monthly spending limits and trigger caps implemented in trigger engine.
-
-### AI Automation Pipeline
-1. Real-time data ingestion from Singapore government APIs
-2. Priority-based condition rule evaluation with complex Boolean logic
-3. AI script generation with template variables
-4. Voice synthesis integration (mock Suno.com API)
-5. Location-based ad triggering with billing automation
+### Voice Synthesis
+- **Service**: `server/services/elevenLabsService.ts`
+- **Provider**: ElevenLabs API
+- **Function**: Converts scripts to high-quality audio with appropriate voice selection
 
 ### Condition Engine
-Advanced rule evaluation in `server/services/conditionEngine.ts` supporting:
-- Temperature ranges and weather conditions
-- Air quality thresholds and UV index
-- Time-based scheduling and flood alert levels
-- Multi-criteria Boolean expressions with priority ranking
+- **Service**: `server/services/conditionEngine.ts`
+- **Function**: Evaluates weather data against advertiser rules to trigger ad generation
+
+## Background Workers
+
+### Worker Types
+- **Data Ingestion Worker**: Fetches weather and environmental data
+- **Trigger Engine Worker**: Processes condition rules and generates advertisements
+- **Voice Synthesis Worker**: Handles audio generation pipeline
+
+### Worker Management
+Workers are temporarily disabled by default. Access worker controls via `/workers` route with admin authentication.
+
+## Environment Variables
+
+### Required for Development
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising
+SESSION_SECRET=your-32-character-session-secret
+GEMINI_API_KEY=your-gemini-api-key
+ELEVENLABS_API_KEY=your-elevenlabs-api-key
+```
+
+## File Structure Patterns
+
+### Component Organization
+- UI components in `client/src/components/ui/` (Radix-based)
+- Business components in `client/src/components/`
+- Page components in `client/src/pages/`
+- Layout components in `client/src/components/layout/`
+
+### Backend Services
+- Route handlers in `server/routes.ts`
+- Business logic in `server/services/`
+- Database operations in `server/storage.ts`
+- Authentication middleware in `server/middleware/auth.ts`
+
+## Key API Endpoints
+
+### Core Functionality
+- `POST /api/v1/generate-promotional-script` - Generate AI-powered promotional scripts
+- `GET /api/v1/advertisers` - Manage advertiser accounts
+- `GET /api/government-data/latest` - Access environmental data
+- `POST /api/workers/start` - Control background processing (admin only)
+
+### Authentication
+- `POST /api/login` - User authentication
+- `POST /api/register` - User registration
+- `POST /api/logout` - Session termination
 
 ## Development Notes
 
-### File Structure Highlights
-- `server/index.ts` - Main server entry point, initializes workers and database seeding
-- `shared/schema.ts` - Complete database schema definitions
-- `client/src/main.tsx` - React app entry with TanStack Query setup
-- `server/services/` - Core business logic services
-- `client/src/pages/` - Main application views
-- `client/src/components/ui/` - Shadcn/ui component library
+### Database Connection
+The application uses a PostgreSQL database. Ensure the database is running before starting the development server. Use Docker for easy database setup: `npm run docker:db`.
 
-### Important Implementation Details
-- Single port 5000 serves both API and frontend
-- Session-based authentication with Passport.js
-- Financial calculations use `decimal` types for accuracy
-- Complete audit trails for all transactions and system events
-- Real-time Singapore market integration (SGD/MYR currencies)
-- ES modules used throughout (type: "module" in package.json)
-- Express.js serves both API routes and static frontend in production
-- TanStack Query with React 18 for client-side state management
+### Path Aliases
+- `@/` maps to `client/src/`
+- `@shared/` maps to `shared/`
+- `@assets/` maps to `attached_assets/`
 
-### Local Development Setup
-Default local database connection:
-```
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising
-```
-
-Workers and background processes are automatically initialized on server startup via `server/index.ts`.
-
-### Documentation Status
-- `replit.md` contains comprehensive recent architecture changes
-- `erd.md` is significantly outdated (30% accuracy vs actual implementation)
-- Actual system is far more sophisticated than original conceptual design
-
-### Common Development Tasks
-- **Database changes**: Modify `shared/schema.ts`, then run `npm run db:push`
-- **Adding new routes**: Update `server/routes.ts` for API endpoints
-- **Frontend routing**: Modify `client/src/App.tsx` for new pages
-- **Worker management**: Access `/workers` route for real-time monitoring
-- **Testing triggers**: Use `/analytics` and `/government-data` pages for debugging
+### TypeScript Configuration
+The project uses strict TypeScript with path mapping. Always run `npm run check` before committing changes.

@@ -13,18 +13,6 @@
     "seed:force": "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising tsx scripts/seed.ts --force",
     "seed:fresh": "npm run db:push && npm run seed",
     "push:seed": "drizzle-kit push && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising tsx scripts/seed.ts",
-    "docker:dev:restart": "docker-compose down --remove-orphans && docker-compose --profile dev build --no-cache && docker-compose --profile dev up -d",
-    "docker:dev": "docker-compose --profile dev up --build",
-    "docker:dev-nocache": "docker-compose --profile dev build --no-cache && docker-compose --profile dev up",
-    "docker:prod": "docker-compose --profile prod up --build -d",
-    "docker:prod-nocache": "docker-compose --profile prod build --no-cache && docker-compose --profile prod up -d",
-    "docker:tools": "docker-compose --profile tools up -d",
-    "docker:stop": "docker-compose down",
-    "docker:clean": "docker-compose down -v --remove-orphans",
-    "docker:rebuild": "docker-compose down && docker-compose build --no-cache",
-    "docker:logs": "docker-compose logs -f app-dev",
-    "docker:db": "docker-compose up postgres -d",
-    "docker:shell": "docker-compose exec app-dev sh"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.7.0",
