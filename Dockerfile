@@ -21,6 +21,9 @@ FROM build-deps AS build
 WORKDIR /app
 COPY . .
 
+# Ensure public directory exists before build
+RUN mkdir -p ./public/audio
+
 # Build frontend and backend
 RUN npm run build
 
@@ -35,11 +38,13 @@ RUN adduser --system --uid 1001 nodejs
 # Copy built application
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/public ./public
 COPY --from=build /app/shared ./shared
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/drizzle.config.ts ./
 COPY --from=build /app/scripts ./scripts
+
+# Copy public directory
+COPY --from=build /app/public ./public
 
 # Copy migration files if they exist
 COPY --from=build /app/migrations ./migrations 2>/dev/null || true
