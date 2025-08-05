@@ -4,10 +4,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Production build
-dist
-build
-
 # Environment files
 .env
 .env.local
@@ -15,70 +11,72 @@ build
 .env.test.local
 .env.production.local
 
-# Database
-*.sqlite
-*.db
-database.sqlite
+# Build outputs
+dist
+.next
+out
 
-# Logs
-logs
-*.log
-pids
-*.pid
-*.seed
-*.pid.lock
+# Cache directories
+.npm
+.yarn
+.vite
 
-# Runtime data
-.nyc_output
-coverage
+# Development files
+.git
+.gitignore
+README.md
+*.md
+!docker-README.md
 
-# IDE and editor files
+# IDE files
 .vscode
 .idea
 *.swp
 *.swo
 *~
 
-# OS generated files
+# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
-# Git
-.git
-.gitignore
-README.md
-.github
+# Logs
+logs
+*.log
 
-# Docker
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+.nyc_output
+
+# ESLint cache
+.eslintcache
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Docker files
 Dockerfile*
 docker-compose*
 .dockerignore
 
-# Documentation
-docs
-*.md
-!CLAUDE.md
+# Backup files
+backup_*
+*.backup
 
-# Cache
-.cache
-.tmp
-temp
-
-# Testing
-test
-tests
-__tests__
-*.test.*
-*.spec.*
-
-# Misc
-.todo
-TODO.md
-
-# Audio files (handled by Docker volume)
-audio
+# Test files
+test-*
+cookies.txt

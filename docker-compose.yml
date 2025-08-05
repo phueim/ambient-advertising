@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: ambient_advertising_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ambient_advertising
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ambient_advertising"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application
+  app:
+    build: .
+    container_name: ambient_advertising_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/ambient_advertising
+      SESSION_SECRET: ${SESSION_SECRET:-your-32-character-session-secret-change-in-production}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY}
+      PORT: 5001
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./public/audio:/app/public/audio
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Database migration and seeding service
+  db-setup:
+    build: .
+    container_name: ambient_advertising_db_setup
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/ambient_advertising
+    command: >
+      sh -c "
+        echo 'Pushing database schema...' &&
+        npx drizzle-kit push &&
+        echo 'Seeding database...' &&
+        npm run seed &&
+        echo 'Database setup completed!'
+      "
+    volumes:
+      - ./shared:/app/shared
+      - ./scripts:/app/scripts
+      - ./drizzle.config.ts:/app/drizzle.config.ts
+    restart: "no"
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
