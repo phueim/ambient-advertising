@@ -87,29 +87,30 @@ export default function AuthPage() {
   const onLoginSubmit = (data: LoginFormValues) => {
     setIsSubmitting(true);
     
-    // For demo purposes, only accept these credentials
-    if (data.username === "demo" && data.password === "password") {
-      login(data.username, data.password); // Use the auth context login function
+    // Check for admin credentials
+    if (data.username === "admin" && data.password === "admin123") {
+      // Set a simple flag in localStorage to indicate logged in
+      localStorage.setItem('isLoggedIn', 'true');
       
       toast({
         title: "Login successful",
         description: "Welcome to the USEA Music Dashboard!"
       });
       
-      // Navigate happens in the login function now
+      navigate('/');
     } else {
       toast({
         title: "Login failed",
-        description: "Please use 'demo' as username and 'password' as password",
+        description: "Please use 'admin' as username and 'admin123' as password",
         variant: "destructive"
       });
       
       // Show error messages on form fields
       loginForm.setError("username", { 
-        message: "Use 'demo'" 
+        message: "Invalid credentials" 
       });
       loginForm.setError("password", { 
-        message: "Use 'password'" 
+        message: "Invalid credentials" 
       });
     }
     

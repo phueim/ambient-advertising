@@ -23,7 +23,6 @@ import {
   Database
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import useaLogo from "@/assets/usea-logo.png";
 
@@ -33,9 +32,13 @@ interface SidebarProps {
 }
 
 export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
-  const [location] = useLocation();
-  const { logout } = useAuth();
+  const [location, navigate] = useLocation();
   const [ambientAdOpen, setAmbientAdOpen] = useState(false);
+
+  const logout = () => {
+    localStorage.removeItem('isLoggedIn');
+    navigate('/auth');
+  };
 
   const navItems = [
     {
