@@ -47,29 +47,6 @@ services:
       retries: 3
       start_period: 40s
 
-  # Database migration and seeding service
-  db-setup:
-    build: .
-    container_name: ambient_advertising_db_setup
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/ambient_advertising
-    command: >
-      sh -c "
-        echo 'Pushing database schema...' &&
-        npx drizzle-kit push &&
-        echo 'Seeding database...' &&
-        npm run seed &&
-        echo 'Database setup completed!'
-      "
-    volumes:
-      - ./shared:/app/shared
-      - ./scripts:/app/scripts
-      - ./drizzle.config.ts:/app/drizzle.config.ts
-    restart: "no"
-
 volumes:
   postgres_data:
     driver: local
