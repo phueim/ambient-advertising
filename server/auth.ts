@@ -94,9 +94,16 @@ export function setupAuth(app: Express) {
     });
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
+  app.post("/api/login", passport.authenticate("local"), async (req, res) => {
     console.log("Login successful, session ID:", req.sessionID);
     console.log("User authenticated:", req.isAuthenticated());
+    
+    // Update user last login
+    try {
+      await storage.updateUserLastLogin(req.user.id);
+    } catch (error) {
+      console.error("Failed to update last login:", error);
+    }
     
     // Force session save and send user data with session info
     req.session.save((err) => {

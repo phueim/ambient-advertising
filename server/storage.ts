@@ -5,11 +5,14 @@ import {
   AdTrigger, InsertAdTrigger, SystemHealth, InsertSystemHealth,
   Venue, InsertVenue, ContractTemplate, InsertContractTemplate,
   AdvertiserContract, InsertAdvertiserContract, VenueContract, InsertVenueContract,
-  BillingRecord, InsertBillingRecord, PayoutRecord, InsertPayoutRecord
+  BillingRecord, InsertBillingRecord, PayoutRecord, InsertPayoutRecord,
+  User, InsertUser
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import * as schema from "@shared/schema";
+import session from "express-session";
+import pgSession from "connect-pg-simple";
 
 // Utility function to calculate credit status
 function calculateCreditStatus(creditBalance: string, budgetCap: string): string {
@@ -135,9 +138,35 @@ export interface IStorage {
   calculateAdvertiserMonthlyBill(contractId: number, period: string): Promise<BillingRecord>;
   calculateVenueMonthlyPayout(contractId: number, period: string): Promise<PayoutRecord>;
   getContractPerformanceMetrics(contractId: number, period: string): Promise<any>;
+  
+  // User operations
+  getAllUsers(): Promise<User[]>;
+  getUserById(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<User>): Promise<User>;
+  deleteUser(id: number): Promise<boolean>;
+  updateUserLastLogin(id: number): Promise<User>;
+  
+  // Session store for authentication
+  sessionStore: any;
 }
 
 export class DatabaseStorage implements IStorage {
+  // Session store configuration
+  sessionStore: any;
+  
+  constructor() {
+    // Initialize session store for PostgreSQL
+    const pgSessionStore = pgSession(session);
+    
+    this.sessionStore = new pgSessionStore({
+      conString: process.env.DATABASE_URL,
+      tableName: 'session', // Use 'session' as table name
+      createTableIfMissing: true,
+    });
+  }
   // Advertiser operations
   async getAllAdvertisers(): Promise<Advertiser[]> {
     return await db.select().from(schema.advertisers).orderBy(desc(schema.advertisers.createdAt));
@@ -990,6 +1019,72 @@ export class DatabaseStorage implements IStorage {
       console.error("Error fetching condition rules for advertiser:", error);
       throw error;
     }
+  }
+
+  // User operations
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(schema.users).orderBy(desc(schema.users.createdAt));
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(schema.users).where(eq(schema.users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(schema.users).where(eq(schema.users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(schema.users).where(eq(schema.users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db
+      .insert(schema.users)
+      .values({
+        ...user,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newUser;
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User> {
+    const [updatedUser] = await db
+      .update(schema.users)
+      .set({
+        ...updates,
+        updatedAt: new Date()
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return updatedUser;
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(schema.users).where(eq(schema.users.id, id));
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
+    }
+  }
+
+  async updateUserLastLogin(id: number): Promise<User> {
+    const [updatedUser] = await db
+      .update(schema.users)
+      .set({
+        lastLogin: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return updatedUser;
   }
 }
 

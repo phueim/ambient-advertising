@@ -216,6 +216,21 @@ export const payoutRecords = pgTable("payout_records", {
   paidDate: timestamp("paid_date"),
 });
 
+// Users table for authentication
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: varchar("username", { length: 50 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: text("password").notNull(), // Hashed password
+  firstName: varchar("first_name", { length: 100 }),
+  lastName: varchar("last_name", { length: 100 }),
+  role: varchar("role", { length: 20 }).default("user").notNull(), // user, admin
+  isActive: boolean("is_active").default(true).notNull(),
+  lastLogin: timestamp("last_login"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
 export const advertiserRelations = relations(advertisers, ({ many }) => ({
   conditionRules: many(conditionRules),
@@ -334,6 +349,9 @@ export const insertVenueContractSchema = createInsertSchema(venueContracts).omit
 export const insertBillingRecordSchema = createInsertSchema(billingRecords).omit({ id: true });
 export const insertPayoutRecordSchema = createInsertSchema(payoutRecords).omit({ id: true });
 
+// User insert schema
+export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true, lastLogin: true });
+
 // Types
 export type GovernmentData = typeof governmentData.$inferSelect;
 export type InsertGovernmentData = z.infer<typeof insertGovernmentDataSchema>;
@@ -378,3 +396,6 @@ export type InsertBillingRecord = z.infer<typeof insertBillingRecordSchema>;
 
 export type PayoutRecord = typeof payoutRecords.$inferSelect;
 export type InsertPayoutRecord = z.infer<typeof insertPayoutRecordSchema>;
+
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;

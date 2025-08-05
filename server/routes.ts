@@ -10,10 +10,11 @@ import { GeminiScriptService } from "./services/geminiScriptService";
 import { elevenLabsService } from "./services/elevenLabsService.js";
 import { voiceSettingsEngine } from "./services/voiceSettingsEngine.js";
 import { advertisingPipelineService } from "./services/advertisingPipelineService.js";
+import { requireAuth, requireAdmin, optionalAuth } from "./middleware/auth";
 
 const router = Router();
 
-// Health check endpoint
+// Health check endpoint (public)
 router.get("/api/health", async (req, res) => {
   try {
     const healthStatus = await storage.getSystemHealthStatus();
@@ -23,8 +24,8 @@ router.get("/api/health", async (req, res) => {
   }
 });
 
-// Worker management endpoints
-router.get("/api/workers/status", async (req, res) => {
+// Worker management endpoints (admin only)
+router.get("/api/workers/status", requireAdmin, async (req, res) => {
   try {
     const workerManager = (global as any).workerManager;
     if (!workerManager) {
@@ -43,7 +44,7 @@ router.get("/api/workers/status", async (req, res) => {
   }
 });
 
-router.post("/api/workers/start", async (req, res) => {
+router.post("/api/workers/start", requireAdmin, async (req, res) => {
   try {
     const workerManager = (global as any).workerManager;
     if (!workerManager) {
@@ -63,7 +64,7 @@ router.post("/api/workers/start", async (req, res) => {
   }
 });
 
-router.post("/api/workers/stop", async (req, res) => {
+router.post("/api/workers/stop", requireAdmin, async (req, res) => {
   try {
     const workerManager = (global as any).workerManager;
     if (!workerManager) {
@@ -77,7 +78,7 @@ router.post("/api/workers/stop", async (req, res) => {
   }
 });
 
-router.post("/api/workers/restart", async (req, res) => {
+router.post("/api/workers/restart", requireAdmin, async (req, res) => {
   try {
     const workerManager = (global as any).workerManager;
     if (!workerManager) {
@@ -538,7 +539,7 @@ router.get("/api/v1/government-data/history", async (req, res) => {
 });
 
 // Advertiser endpoints
-router.get("/api/v1/advertisers", async (req, res) => {
+router.get("/api/v1/advertisers", requireAuth, async (req, res) => {
   try {
     const advertisers = await storage.getAllAdvertisers();
     res.json(advertisers);
@@ -560,7 +561,7 @@ router.get("/api/v1/advertisers/:id", async (req, res) => {
   }
 });
 
-router.post("/api/v1/advertisers", async (req, res) => {
+router.post("/api/v1/advertisers", requireAuth, async (req, res) => {
   try {
     const validatedData = insertAdvertiserSchema.parse(req.body);
     
@@ -1214,7 +1215,7 @@ router.post("/api/v1/advertising-pipeline/retry-failed", async (req, res) => {
 });
 
 // Government Data endpoints
-router.get("/api/government-data/latest", async (req, res) => {
+router.get("/api/government-data/latest", requireAuth, async (req, res) => {
   let latestData = null;
   let matchedRules = [];
   let generatedScripts: any[] = [];

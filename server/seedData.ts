@@ -2,7 +2,18 @@ import { storage } from "./storage";
 import { AutomationPipeline } from "./services/automationPipeline";
 import * as fs from "fs";
 import * as path from "path";
-import type { InsertAdvertiser } from "@shared/schema";
+import type { InsertAdvertiser, InsertUser } from "@shared/schema";
+import { scrypt, randomBytes } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
+
+// Password hashing function (matches auth.ts)
+async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
 
 export async function seedDatabase(force: boolean = false) {
   console.log("🌱 Checking database for existing data...");
@@ -13,11 +24,12 @@ export async function seedDatabase(force: boolean = false) {
     const existingLocations = await storage.getAllLocations();
     const existingRules = await storage.getAllConditionRules();
     const existingAudio = await storage.getAllAudio();
+    const existingUsers = await storage.getAllUsers();
 
     // Skip seeding if data exists and not forced
-    if (!force && (existingAdvertisers.length > 0 || existingLocations.length > 0 || existingRules.length > 0)) {
+    if (!force && (existingAdvertisers.length > 0 || existingLocations.length > 0 || existingRules.length > 0 || existingUsers.length > 0)) {
       console.log("ℹ️  Database already contains data, skipping seeding");
-      console.log(`   Found: ${existingAdvertisers.length} advertisers, ${existingLocations.length} locations, ${existingRules.length} rules, ${existingAudio.length} audio`);
+      console.log(`   Found: ${existingAdvertisers.length} advertisers, ${existingLocations.length} locations, ${existingRules.length} rules, ${existingAudio.length} audio, ${existingUsers.length} users`);
       return;
     }
 
@@ -39,6 +51,10 @@ export async function seedDatabase(force: boolean = false) {
     }
 
     console.log(force ? "🔄 Force seeding enabled, proceeding..." : "📝 Database is empty, proceeding with seeding...");
+
+    // Create sample users first
+    console.log("Creating users...");
+    await seedUsers();
 
     // Create sample advertisers
     console.log("Creating advertisers...");
@@ -482,4 +498,51 @@ export async function startAutomationDemo() {
   console.log("📊 Monitor the logs to see the AI automation in action!");
   
   return pipeline;
+}
+
+// Separate function to seed users
+async function seedUsers() {
+  const users: InsertUser[] = [
+    {
+      username: "admin",
+      email: "admin@ambient.local",
+      password: await hashPassword("admin123"),
+      firstName: "System",
+      lastName: "Administrator", 
+      role: "admin",
+      isActive: true
+    },
+    {
+      username: "demo",
+      email: "demo@ambient.local",
+      password: await hashPassword("demo123"),
+      firstName: "Demo",
+      lastName: "User",
+      role: "user",
+      isActive: true
+    },
+    {
+      username: "manager",
+      email: "manager@ambient.local",
+      password: await hashPassword("manager123"),
+      firstName: "Campaign",
+      lastName: "Manager",
+      role: "user",
+      isActive: true
+    }
+  ];
+
+  const createdUsers = [];
+  for (const userData of users) {
+    try {
+      const user = await storage.createUser(userData);
+      createdUsers.push(user);
+      console.log(`   ✓ Created user: ${user.username} (${user.email})`);
+    } catch (error) {
+      console.error(`   ✗ Failed to create user ${userData.username}:`, error.message);
+    }
+  }
+  
+  console.log(`📋 Created ${createdUsers.length}/${users.length} users`);
+  return createdUsers;
 }
