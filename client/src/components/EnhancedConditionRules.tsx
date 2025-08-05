@@ -62,7 +62,10 @@ export function EnhancedConditionRules() {
       temperature_c_less_than: "",
       humidity_percent_above: "",
       weather_condition_contains: "",
-      aqi_above: "",
+      is_weekend: false,
+    is_business_hours: false,
+    is_peak_hours: false,
+    time_category: "",
       // Time-based conditions
       time_of_day_between_start: "",
       time_of_day_between_end: "",
@@ -88,7 +91,10 @@ export function EnhancedConditionRules() {
         { key: "temperature_c_less_than", label: "Temperature below (°C)", type: "number", placeholder: "20" },
         { key: "humidity_percent_above", label: "Humidity above (%)", type: "number", placeholder: "80" },
         { key: "weather_condition_contains", label: "Weather condition", type: "text", placeholder: "rain, sunny, cloudy" },
-        { key: "aqi_above", label: "Air Quality Index above", type: "number", placeholder: "100" },
+        { key: "is_weekend", label: "Is Weekend", type: "boolean" },
+    { key: "is_business_hours", label: "Is Business Hours", type: "boolean" },
+    { key: "is_peak_hours", label: "Is Peak Hours", type: "boolean" },
+    { key: "time_category", label: "Time Category", type: "select", options: ["morning", "afternoon", "evening", "night"] },
       ]
     },
     temporal: {
@@ -263,7 +269,10 @@ export function EnhancedConditionRules() {
         temperature_c_less_than: "",
         humidity_percent_above: "",
         weather_condition_contains: "",
-        aqi_above: "",
+        is_weekend: false,
+    is_business_hours: false,
+    is_peak_hours: false,
+    time_category: "",
         // Time-based conditions
         time_of_day_between_start: "",
         time_of_day_between_end: "",

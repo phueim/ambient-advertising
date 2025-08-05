@@ -72,7 +72,7 @@ export class DataIngestionWorker {
         humidity: data.weather?.humidity_percent,
         condition: data.weather?.forecast,
         uvIndex: data.weather?.uv_index,
-        aqi: data.airQuality?.aqi,
+
         location: "Singapore"
       });
       
@@ -95,7 +95,12 @@ export class DataIngestionWorker {
         const governmentData = {
           temperature: data.weather?.temperature_c || 0,
           weather_condition: data.weather?.condition || 'unknown',
-          air_quality_index: data.airQuality?.aqi || 0,
+          hour_of_day: data.timeBased?.hour_of_day || 0,
+        day_of_week: data.timeBased?.day_of_week || 0,
+        is_weekend: data.timeBased?.is_weekend || false,
+        is_business_hours: data.timeBased?.is_business_hours || false,
+        is_peak_hours: data.timeBased?.is_peak_hours || false,
+        time_category: data.timeBased?.time_category || 'unknown',
           uv_index: data.weather?.uv_index || 0,
           traffic_congestion_level: 'moderate', // Default value
           flood_alerts: [],

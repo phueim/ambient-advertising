@@ -22,15 +22,20 @@ export interface TrafficData {
 
 
 
-export interface AirQualityData {
+export interface TimeBasedData {
   timestamp: string;
-  aqi: number;
-  category: string;
+  hour_of_day: number; // 0-23
+  day_of_week: number; // 0-6 (Sunday=0)
+  is_weekend: boolean;
+  is_business_hours: boolean; // 9AM-6PM Singapore time
+  is_peak_hours: boolean; // Rush hour periods
+  time_category: string; // 'morning', 'afternoon', 'evening', 'night'
+  singapore_time: string; // Formatted Singapore time
 }
 
 export class GovernmentDataService {
   private readonly SINGAPORE_WEATHER_API = "https://api.data.gov.sg/v1/environment/2-hour-weather-forecast";
-  private readonly SINGAPORE_AIR_QUALITY_API = "https://api.data.gov.sg/v1/environment/psi";
+
   private readonly SINGAPORE_TRAFFIC_API = "https://api.data.gov.sg/v1/transport/traffic-images";
 
   // Mock realistic Singapore weather data for demo
@@ -67,17 +72,38 @@ export class GovernmentDataService {
     };
   }
 
-  private generateMockAirQualityData(): AirQualityData {
-    const aqi = Math.floor(Math.random() * 200) + 20; // 20-220 AQI
-    let category = "Good";
+  private generateMockTimeBasedData(): TimeBasedData {
+    const now = new Date();
+    const singaporeTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Singapore"}));
     
-    if (aqi > 100) category = "Unhealthy";
-    else if (aqi > 50) category = "Moderate";
+    const hour = singaporeTime.getHours();
+    const dayOfWeek = singaporeTime.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const isBusinessHours = hour >= 9 && hour < 18 && !isWeekend;
+    const isPeakHours = (hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19); // Rush hours
+    
+    let timeCategory = 'night';
+    if (hour >= 6 && hour < 12) timeCategory = 'morning';
+    else if (hour >= 12 && hour < 17) timeCategory = 'afternoon';
+    else if (hour >= 17 && hour < 21) timeCategory = 'evening';
     
     return {
-      timestamp: new Date().toISOString(),
-      aqi,
-      category
+      timestamp: now.toISOString(),
+      hour_of_day: hour,
+      day_of_week: dayOfWeek,
+      is_weekend: isWeekend,
+      is_business_hours: isBusinessHours,
+      is_peak_hours: isPeakHours,
+      time_category: timeCategory,
+      singapore_time: singaporeTime.toLocaleString('en-SG', {
+        timeZone: 'Asia/Singapore',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
     };
   }
 
@@ -107,7 +133,7 @@ export class GovernmentDataService {
 
   async fetchLatestData(): Promise<{
     weather: WeatherData;
-    airQuality: AirQualityData;
+    timeBased: TimeBasedData;
     traffic: TrafficData;
   }> {
     const startTime = Date.now();
@@ -118,7 +144,7 @@ export class GovernmentDataService {
 
       // For now, use mock data. In production, replace with actual API calls
       const weather = this.generateMockWeatherData();
-      const airQuality = this.generateMockAirQualityData();
+      const timeBased = this.generateMockTimeBasedData();
       const traffic = this.generateMockTrafficData();
 
       // Save to database
@@ -129,18 +155,16 @@ export class GovernmentDataService {
         humidity: weather.humidity_percent,
         condition: weather.condition,
         uvIndex: weather.uv_index,
-        aqi: undefined,
         location: "Singapore"
       });
 
       await storage.saveGovernmentData({
-        source: "air_quality",
-        rawData: airQuality,
+        source: "time_based",
+        rawData: timeBased,
         temperature: undefined,
         humidity: undefined,
-        condition: undefined,
+        condition: timeBased.time_category,
         uvIndex: undefined,
-        aqi: airQuality.aqi,
         location: "Singapore"
       });
 
@@ -151,9 +175,9 @@ export class GovernmentDataService {
 
       console.log(`[GovernmentDataService] Data fetched successfully in ${responseTime}ms`);
       console.log(`[GovernmentDataService] Weather: ${weather.temperature_c}°C, ${weather.condition}, ${weather.humidity_percent}% humidity`);
-      console.log(`[GovernmentDataService] Air Quality: AQI ${airQuality.aqi} (${airQuality.category})`);
+      console.log(`[GovernmentDataService] Time-Based: ${timeBased.time_category} (${timeBased.singapore_time}), Peak: ${timeBased.is_peak_hours}`);
 
-      return { weather, airQuality, traffic };
+      return { weather, timeBased, traffic };
     } catch (error) {
       const responseTime = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -196,28 +220,5 @@ export class GovernmentDataService {
     }
   }
 
-  // Method to fetch real Singapore air quality data
-  private async fetchRealSingaporeAirQuality(): Promise<AirQualityData> {
-    try {
-      const response = await fetch(this.SINGAPORE_AIR_QUALITY_API);
-      const data = await response.json();
-      
-      const reading = data.items?.[0]?.readings?.psi_twenty_four_hourly;
-      if (!reading) throw new Error("No air quality data available");
-      
-      const nationalAQI = reading.national || 50;
-      let category = "Good";
-      if (nationalAQI > 100) category = "Unhealthy";
-      else if (nationalAQI > 50) category = "Moderate";
-      
-      return {
-        timestamp: new Date().toISOString(),
-        aqi: nationalAQI,
-        category
-      };
-    } catch (error) {
-      console.error("Error fetching real Singapore air quality:", error);
-      throw error;
-    }
-  }
+
 }

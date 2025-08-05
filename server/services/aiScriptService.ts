@@ -90,9 +90,9 @@ export class AIScriptService {
       script += `Current weather: ${variables.condition || conditions.weather_condition_contains}. `;
     }
 
-    if (conditions.aqi_above) {
-      script += `Air quality alert - AQI is ${variables.aqi || "elevated"}. `;
-    }
+          if (conditions.is_peak_hours) {
+        script += `Peak hours - traffic conditions may be congested. `;
+      }
 
     // Time-based conditions
     if (conditions.time_of_day_between_start || conditions.is_weekend) {
@@ -150,14 +150,18 @@ export class AIScriptService {
       }
     }
 
-    if (variables.aqi) {
-      const aqi = parseInt(variables.aqi);
-      let aqiStatus = "good";
-      if (aqi > 100) aqiStatus = "unhealthy";
-      else if (aqi > 50) aqiStatus = "moderate";
-      
-      forecast += `Air quality index is ${aqi}, which is ${aqiStatus} for outdoor activities. `;
-    }
+          if (variables.time_category) {
+        const timeOfDay = variables.time_category;
+        forecast += `It's currently ${timeOfDay} time in Singapore. `;
+        
+        if (variables.is_peak_hours) {
+          forecast += `Rush hour traffic conditions are expected. `;
+        }
+        
+        if (variables.is_weekend) {
+          forecast += `Enjoy your weekend activities! `;
+        }
+      }
 
     // Add professional weather advisory
     forecast += this.getWeatherAdvisory(variables);
@@ -193,7 +197,7 @@ export class AIScriptService {
       }
     }
 
-    if (variables.aqi && parseInt(variables.aqi) > 100) {
+          if (variables.is_peak_hours) {
       advisory += "Consider limiting prolonged outdoor exposure, especially for sensitive individuals. ";
     }
 

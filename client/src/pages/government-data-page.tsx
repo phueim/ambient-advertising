@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { RefreshCw, Thermometer, Wind, AlertTriangle, Clock, Database } from "lucide-react";
+import { RefreshCw, Thermometer, Wind, AlertTriangle, Clock, Database, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,10 +16,15 @@ interface GovernmentData {
     uv_index: number;
     alerts?: string[];
   };
-  airQuality: {
+  timeBased: {
     timestamp: string;
-    aqi: number;
-    category: string;
+    hour_of_day: number;
+    day_of_week: number;
+    is_weekend: boolean;
+    is_business_hours: boolean;
+    is_peak_hours: boolean;
+    time_category: string;
+    singapore_time: string;
   };
   traffic: {
     timestamp: string;
@@ -112,10 +117,14 @@ export default function GovernmentDataPage() {
     return "text-gray-600";
   };
 
-  const getAQIColor = (aqi: number) => {
-    if (aqi > 100) return "text-red-600";
-    if (aqi > 50) return "text-yellow-500";
-    return "text-green-600";
+  const getTimeCategoryColor = (category: string) => {
+    switch (category) {
+      case 'morning': return "text-yellow-600";
+      case 'afternoon': return "text-orange-500";
+      case 'evening': return "text-purple-600";
+      case 'night': return "text-blue-600";
+      default: return "text-gray-600";
+    }
   };
 
   const getRulePriorityColor = (priority: number) => {
@@ -237,31 +246,48 @@ export default function GovernmentDataPage() {
               </Card>
             )}
 
-            {/* Air Quality Data */}
-            {governmentData?.airQuality && (
+            {/* Time-Based Data */}
+            {governmentData?.timeBased && (
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Wind className="h-5 w-5" />
-                    Air Quality
+                    <Calendar className="h-5 w-5" />
+                    Time-Based
                   </CardTitle>
                   <CardDescription>
-                    {formatTimestamp(governmentData.airQuality.timestamp)}
+                    {formatTimestamp(governmentData.timeBased.timestamp)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">AQI</span>
-                      <span className={`font-semibold ${getAQIColor(governmentData.airQuality.aqi)}`}>
-                        {governmentData.airQuality.aqi}
+                      <span className="text-sm text-gray-600">Singapore Time</span>
+                      <span className="font-semibold text-gray-800">
+                        {governmentData.timeBased.singapore_time}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Category</span>
-                      <Badge variant={governmentData.airQuality.aqi > 100 ? "destructive" : 
-                        governmentData.airQuality.aqi > 50 ? "secondary" : "default"}>
-                        {governmentData.airQuality.category}
+                      <span className="text-sm text-gray-600">Time Category</span>
+                      <span className={`font-semibold ${getTimeCategoryColor(governmentData.timeBased.time_category)}`}>
+                        {governmentData.timeBased.time_category}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Day Type</span>
+                      <Badge variant={governmentData.timeBased.is_weekend ? "secondary" : "default"}>
+                        {governmentData.timeBased.is_weekend ? 'Weekend' : 'Weekday'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Business Hours</span>
+                      <Badge variant={governmentData.timeBased.is_business_hours ? "default" : "secondary"}>
+                        {governmentData.timeBased.is_business_hours ? 'Yes' : 'No'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Peak Hours</span>
+                      <Badge variant={governmentData.timeBased.is_peak_hours ? "destructive" : "secondary"}>
+                        {governmentData.timeBased.is_peak_hours ? 'Yes' : 'No'}
                       </Badge>
                     </div>
                   </div>

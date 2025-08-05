@@ -7,13 +7,13 @@ import { relations } from "drizzle-orm";
 export const governmentData = pgTable("government_data", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
-  source: varchar("source", { length: 50 }).notNull(), // weather, traffic, air_quality
+  source: varchar("source", { length: 50 }).notNull(), // weather, traffic, time_based
   rawData: json("raw_data").notNull(),
   temperature: decimal("temperature", { precision: 5, scale: 2 }),
   humidity: integer("humidity"),
   condition: varchar("condition", { length: 100 }),
   uvIndex: integer("uv_index"),
-  aqi: integer("aqi"),
+
   location: varchar("location", { length: 100 }),
 });
 

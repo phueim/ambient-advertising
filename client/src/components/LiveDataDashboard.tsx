@@ -44,7 +44,7 @@ interface SystemHealth {
 interface GovernmentData {
   id: number;
   weatherData: any;
-  airQualityData: any;
+  timeBasedData: any;
   timestamp: string;
 }
 
@@ -73,8 +73,9 @@ export function LiveDataDashboard() {
             humidity_percent: 75,
             wind_speed_kmh: 15
           },
-          airQualityData: {
-            aqi: 95,
+          timeBasedData: {
+            time_category: 'afternoon',
+    is_peak_hours: false,
             status: "Moderate"
           },
           timestamp: new Date().toISOString()
@@ -281,9 +282,9 @@ export function LiveDataDashboard() {
                   </div>
                   <Badge 
                     variant="outline" 
-                    className={`${latestData[0].airQualityData.aqi > 100 ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}
-                  >
-                    AQI {latestData[0].airQualityData.aqi}
+                                className={`${latestData[0].airQualityData.is_peak_hours ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}
+          >
+            {latestData[0].airQualityData.time_category}
                   </Badge>
                 </div>
               </>

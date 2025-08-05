@@ -1243,7 +1243,7 @@ router.get("/api/government-data/latest", async (req, res) => {
     // Debug: Log the data structure being used
     console.log("[API] ConditionEngine data structure:", {
       weather: latestData.weather ? Object.keys(latestData.weather) : 'missing',
-      airQuality: latestData.airQuality ? Object.keys(latestData.airQuality) : 'missing',
+      timeBased: latestData.timeBased ? Object.keys(latestData.timeBased) : 'missing',
       traffic: latestData.traffic ? Object.keys(latestData.traffic) : 'missing'
     });
     
@@ -1266,7 +1266,12 @@ router.get("/api/government-data/latest", async (req, res) => {
       const governmentData = {
         temperature: latestData.weather?.temperature_c || 0,
         weather_condition: latestData.weather?.condition || 'unknown',
-        air_quality_index: latestData.airQuality?.aqi || 0,
+        hour_of_day: latestData.timeBased?.hour_of_day || 0,
+        day_of_week: latestData.timeBased?.day_of_week || 0,
+        is_weekend: latestData.timeBased?.is_weekend || false,
+        is_business_hours: latestData.timeBased?.is_business_hours || false,
+        is_peak_hours: latestData.timeBased?.is_peak_hours || false,
+        time_category: latestData.timeBased?.time_category || 'unknown',
         uv_index: latestData.weather?.uv_index || 0,
         traffic_congestion_level: 'moderate', // Default value
         flood_alerts: [],

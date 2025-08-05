@@ -182,13 +182,14 @@ class VoiceSettingsEngine {
         }
       }
 
-      if (rule.conditions.air_quality_index) {
-        const aqi = Number(rule.conditions.air_quality_index);
-        if (aqi <= 50) {
-          return { ...this.ruleSettingsMap['air-quality-good'] };
-        }
-        if (aqi >= 100) {
-          return { ...this.ruleSettingsMap['air-quality-poor'] };
+      if (rule.conditions.time_category) {
+        switch (rule.conditions.time_category) {
+          case 'morning':
+            return { ...this.ruleSettingsMap['time-morning'] };
+          case 'evening':
+            return { ...this.ruleSettingsMap['time-evening'] };
+          case 'night':
+            return { ...this.ruleSettingsMap['time-night'] };
         }
       }
 

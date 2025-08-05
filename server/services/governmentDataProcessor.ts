@@ -3,11 +3,16 @@ import { storage } from '../storage.js';
 export interface GovernmentData {
   temperature: number;
   weather_condition: string;
-  air_quality_index: number;
   uv_index: number;
   traffic_congestion_level: string;
   flood_alerts: any[];
   timestamp: string;
+  hour_of_day: number;
+  day_of_week: number;
+  is_weekend: boolean;
+  is_business_hours: boolean;
+  is_peak_hours: boolean;
+  time_category: string;
 }
 
 export interface MatchedRule {
@@ -45,10 +50,17 @@ class GovernmentDataProcessor {
         forecast: '',
         alerts: []
       },
-      airQuality: {
+      timeBased: {
         timestamp: governmentData.timestamp,
-        aqi: governmentData.air_quality_index,
-        category: governmentData.air_quality_index > 100 ? 'unhealthy' : 'good'
+        hour_of_day: governmentData.hour_of_day,
+        day_of_week: governmentData.day_of_week,
+        is_weekend: governmentData.is_weekend,
+        is_business_hours: governmentData.is_business_hours,
+        is_peak_hours: governmentData.is_peak_hours,
+        time_category: governmentData.time_category,
+        singapore_time: new Date(governmentData.timestamp).toLocaleString('en-SG', {
+          timeZone: 'Asia/Singapore'
+        })
       },
       traffic: {
         timestamp: governmentData.timestamp,
@@ -63,7 +75,7 @@ class GovernmentDataProcessor {
     // Debug: Log the transformed nested data
     console.log("[GovernmentDataProcessor] Transformed nested data:", {
       weather: conditionEngineData.weather,
-      airQuality: conditionEngineData.airQuality,
+      timeBased: conditionEngineData.timeBased,
       traffic: conditionEngineData.traffic
     });
     

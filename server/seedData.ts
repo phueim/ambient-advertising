@@ -451,14 +451,11 @@ function extractVariablesFromText(text: string): any {
     variables.humidity = parseInt(humidityMatch[1]);
   }
   
-  const aqiMatch = text.match(/air quality index[:\s]+(\d+)/i);
-  if (aqiMatch) {
-    variables.aqi = parseInt(aqiMatch[1]);
-  }
-  
-  const timeMatch = text.match(/(\d{1,2}:\d{2})/);
+  // Time-based variable parsing
+  const timeMatch = text.match(/(\d{1,2}):(\d{2})/);
   if (timeMatch) {
-    variables.time = timeMatch[1];
+    variables.hour_of_day = parseInt(timeMatch[1]);
+    variables.time = timeMatch[0]; // Full matched time string
   }
   
   const dateMatch = text.match(/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/i);

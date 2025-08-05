@@ -89,10 +89,15 @@ export class TriggerEngineWorker {
           uv_index: latestData.uvIndex || 0,
           timestamp: latestData.timestamp.toISOString()
         },
-        airQuality: {
-          aqi: latestData.aqi || 0,
+        timeBased: {
           timestamp: latestData.timestamp.toISOString(),
-          category: "Moderate"
+          hour_of_day: new Date().getHours(),
+          day_of_week: new Date().getDay(),
+          is_weekend: [0, 6].includes(new Date().getDay()),
+          is_business_hours: false, // Default value
+          is_peak_hours: false, // Default value
+          time_category: 'unknown',
+          singapore_time: new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
         },
         traffic: {
           timestamp: latestData.timestamp.toISOString(),

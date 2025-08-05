@@ -1,6 +1,6 @@
 import { storage } from "../storage";
 import { ConditionRule, Advertiser } from "@shared/schema";
-import type { WeatherData, AirQualityData, TrafficData } from "./governmentDataService";
+import type { WeatherData, TimeBasedData, TrafficData } from "./governmentDataService";
 
 export interface ConditionMatch {
   rule: ConditionRule;
@@ -19,7 +19,7 @@ export interface ConditionMatch {
 export class ConditionEngine {
   async evaluateConditions(data: {
     weather: WeatherData;
-    airQuality: AirQualityData;
+    timeBased: TimeBasedData;
     traffic: TrafficData;
   }): Promise<ConditionMatch[]> {
     const startTime = Date.now();
@@ -68,7 +68,7 @@ export class ConditionEngine {
 
   private evaluateRule(rule: ConditionRule, data: {
     weather: WeatherData;
-    airQuality: AirQualityData;
+    timeBased: TimeBasedData;
     traffic: TrafficData;
   }, advertiserMap: Map<number, Advertiser>): ConditionMatch | null {
     try {
@@ -157,12 +157,49 @@ export class ConditionEngine {
         }
       }
 
-      // Air Quality conditions
-      if (conditions.aqi_above !== undefined) {
-        if (data.airQuality.aqi > conditions.aqi_above) {
-          matchedConditions.push(`AQI ${data.airQuality.aqi} > ${conditions.aqi_above}`);
-          variables.aqi = data.airQuality.aqi;
-          variables.air_quality_category = data.airQuality.category;
+      // Time-based conditions (using new time data structure)
+      if (conditions.is_weekend !== undefined) {
+        if (data.timeBased.is_weekend === conditions.is_weekend) {
+          matchedConditions.push(`Weekend condition: ${data.timeBased.is_weekend ? 'is weekend' : 'is weekday'}`);
+          variables.is_weekend = data.timeBased.is_weekend;
+          variables.day_of_week = data.timeBased.day_of_week;
+        } else {
+          return null;
+        }
+      }
+
+      if (conditions.is_business_hours !== undefined) {
+        if (data.timeBased.is_business_hours === conditions.is_business_hours) {
+          matchedConditions.push(`Business hours: ${data.timeBased.is_business_hours ? 'within business hours' : 'outside business hours'}`);
+          variables.is_business_hours = data.timeBased.is_business_hours;
+        } else {
+          return null;
+        }
+      }
+
+      if (conditions.is_peak_hours !== undefined) {
+        if (data.timeBased.is_peak_hours === conditions.is_peak_hours) {
+          matchedConditions.push(`Peak hours: ${data.timeBased.is_peak_hours ? 'is peak time' : 'is not peak time'}`);
+          variables.is_peak_hours = data.timeBased.is_peak_hours;
+        } else {
+          return null;
+        }
+      }
+
+      if (conditions.time_category !== undefined) {
+        if (data.timeBased.time_category === conditions.time_category) {
+          matchedConditions.push(`Time category: ${data.timeBased.time_category}`);
+          variables.time_category = data.timeBased.time_category;
+        } else {
+          return null;
+        }
+      }
+
+      if (conditions.hour_of_day_between !== undefined) {
+        const [minHour, maxHour] = conditions.hour_of_day_between;
+        if (data.timeBased.hour_of_day >= minHour && data.timeBased.hour_of_day <= maxHour) {
+          matchedConditions.push(`Hour ${data.timeBased.hour_of_day} between ${minHour} and ${maxHour}`);
+          variables.hour_of_day = data.timeBased.hour_of_day;
         } else {
           return null;
         }
