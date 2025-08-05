@@ -13,7 +13,7 @@
     "seed:force": "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising tsx scripts/seed.ts --force",
     "seed:fresh": "npm run db:push && npm run seed",
     "push:seed": "drizzle-kit push && DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ambient_advertising tsx scripts/seed.ts",
-    "docker:dev:restart": "docker-compose down --remove-orphans && docker-compose --profile dev build --no-cache && docker-compose --profile dev up",
+    "docker:dev:restart": "docker-compose down --remove-orphans && docker-compose --profile dev build --no-cache && docker-compose --profile dev up -d",
     "docker:dev": "docker-compose --profile dev up --build",
     "docker:dev-nocache": "docker-compose --profile dev build --no-cache && docker-compose --profile dev up",
     "docker:prod": "docker-compose --profile prod up --build -d",
