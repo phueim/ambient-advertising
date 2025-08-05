@@ -1,0 +1,446 @@
+{
+  "project_name": "Ambient Advertising AI Automation System",
+  "overview": "AI-driven indoor advertising platform that uses live government weather data (and related environmental signals) to trigger contextual ads with real-time AI-generated scripts and voiceovers, delivered via CMS to physical playback points (malls, supermarkets, convenience stores).",
+  "objectives": [
+    "Automatically deliver relevant ads based primarily on real-time weather and environmental conditions.",
+    "Enable pay-per-trigger billing with budget/credit control for advertisers.",
+    "Generate natural-language scripts and voiceovers via AI without human intervention.",
+    "Provide transparent reporting for advertisers and landlords."
+  ],
+  "success_metrics": {
+    "ad_trigger_accuracy": ">=95%",
+    "voiceover_generation_latency_sec": "<=5",
+    "system_uptime_percent": ">=99.5",
+    "advertiser_budget_overruns": "0%",
+    "landlord_retention_rate": ">=85%"
+  },
+  "scope": {
+    "in_scope": [
+      "Integration with Singapore government APIs for weather, traffic, and environmental alerts",
+      "AI script generation from structured weather data",
+      "AI voice synthesis pairing with ads",
+      "CMS backend for trigger logic, credit tracking, scheduling and fallback",
+      "Ad playback orchestration",
+      "Advertiser and landlord reporting"
+    ],
+    "out_of_scope": [
+      "Manual voiceover recording (except fallback branding spots)",
+      "Non-contextual batch advertising unrelated to live weather or environmental triggers"
+    ]
+  },
+  "roles_responsibilities": {
+    "Phu": "Lead backend AI automation: conditioning logic, script pipeline, voice synthesis orchestration.",
+    "IT Team": "CMS development, ad triggering engine, scheduling, playback interface, billing/credit system, logging & error handling.",
+    "Yew Jun": "Acquire and maintain access to government data sources (especially Singapore weather APIs), ensure compliance.",
+    "Content Team (Grace)": "Validate AI-generated scripts for tone/clarity and provide fallback templates.",
+    "Marketing (Suraya & Lenny)": "Prepare sales decks (landlord & advertiser), define pricing/reference benchmarks."
+  },
+  "data_sources": {
+    "government_apis": [
+      {
+        "name": "Weather",
+        "fields": [
+          "temperature_c",
+          "humidity_percent",
+          "condition",
+          "uv_index",
+          "forecast",
+          "alerts"
+        ]
+      },
+      {
+        "name": "Traffic",
+        "fields": [
+          "incident_type",
+          "location",
+          "delay_minutes",
+          "roadworks",
+          "accident_severity"
+        ]
+      },
+      {
+        "name": "Flood",
+        "fields": [
+          "alert_level",
+          "affected_area",
+          "timestamp"
+        ]
+      },
+      {
+        "name": "AirQuality",
+        "fields": [
+          "aqi",
+          "category"
+        ]
+      }
+    ]
+  },
+  "workflow_steps": [
+    {
+      "id": "1",
+      "name": "Fetch Government Data",
+      "description": "Poll SG government APIs for live weather, traffic, flood, and air quality data.",
+      "frequency_default_minutes": 5
+    },
+    {
+      "id": "2",
+      "name": "Data Processing & Condition Evaluation",
+      "description": "Normalize incoming data and evaluate weather/environmental trigger conditions."
+    },
+    {
+      "id": "3",
+      "name": "AI Script Generation",
+      "description": "Generate human-readable ad script based on evaluated weather conditions and advertiser mapping."
+    },
+    {
+      "id": "4",
+      "name": "AI Voice Synthesis",
+      "description": "Synthesize voiceover from generated script (supports gender/voice variants)."
+    },
+    {
+      "id": "5",
+      "name": "CMS Triggering & Scheduling",
+      "description": "Decide which ad to play, deduct advertiser credit, handle fallback, schedule playback."
+    },
+    {
+      "id": "6",
+      "name": "Ad Playback",
+      "description": "Serve paired video + voiceover to endpoint displays in physical locations."
+    },
+    {
+      "id": "7",
+      "name": "Reporting & Analytics",
+      "description": "Aggregate triggers, credit usage, landlord revenue share, system health, and deliver dashboards/reports."
+    }
+  ],
+  "condition_rules": [
+    {
+      "id": "hot_humid",
+      "conditions": {
+        "temperature_c_greater_than": 32,
+        "humidity_percent_above": 60
+      },
+      "advertiser": "Australia Tourism Board",
+      "priority": 10,
+      "message_template": "The current temperature is {temperature_c}\u00b0C with high humidity. This message is brought to you by Tourism Australia\u2014experience cooler weather in Sydney or Melbourne."
+    },
+    {
+      "id": "heat_wave_special",
+      "conditions": {
+        "temperature_c_greater_than": 35
+      },
+      "advertiser": "ColdBrew Drinks",
+      "priority": 9,
+      "message_template": "It's a heat wave at {location}. Cool down with ColdBrew\u2019s iced combo\u2014buy one, get one 50% off for the next 20 minutes."
+    },
+    {
+      "id": "rain_thunderstorm",
+      "conditions": {
+        "weather_condition_contains": [
+          "rain",
+          "thunderstorm"
+        ]
+      },
+      "advertiser": "Grab / Insurance",
+      "priority": 10,
+      "message_template": "Wet conditions detected. Stay safe or ride comfortably\u2014grab a ride with code {promo_code} or ensure you're covered by {advertiser_name}."
+    },
+    {
+      "id": "heavy_rain_flood_alert",
+      "conditions": {
+        "weather_condition_contains": [
+          "heavy rain",
+          "flood alert"
+        ]
+      },
+      "advertiser": "Local F&B Comfort",
+      "priority": 9,
+      "message_template": "Heavy rain in effect. Warm up with our comfort meal bundle\u2014available now inside the mall."
+    },
+    {
+      "id": "sudden_temp_drop",
+      "conditions": {
+        "temperature_drop_in_last_hour_c_greater_than": 5
+      },
+      "advertiser": "Soup & Warm Drinks",
+      "priority": 8,
+      "message_template": "Temperature just dropped by {delta}\u00b0C. Warm up with a soup combo\u2014today only special pricing."
+    },
+    {
+      "id": "high_uv_index",
+      "conditions": {
+        "uv_index_above": 7
+      },
+      "advertiser": "SunCare Products",
+      "priority": 6,
+      "message_template": "UV index is high today. Protect your skin with SunCare\u2014get a free sample with any purchase."
+    },
+    {
+      "id": "poor_air_quality",
+      "conditions": {
+        "aqi_above": 100
+      },
+      "advertiser": "Health & Wellness",
+      "priority": 7,
+      "message_template": "Air quality is moderate to unhealthy. Breathe easier with our premium air filters\u2014exclusive in-store offer."
+    },
+    {
+      "id": "cool_mild",
+      "conditions": {
+        "temperature_c_between": [
+          24,
+          28
+        ],
+        "weather_condition_not_contains": [
+          "rain",
+          "thunderstorm"
+        ]
+      },
+      "advertiser": "General Branding",
+      "priority": 3,
+      "message_template": "Enjoy the pleasant weather. Check out today\u2019s special deals at our retailers."
+    },
+    {
+      "id": "foggy_morning",
+      "conditions": {
+        "weather_condition_contains": [
+          "fog",
+          "mist"
+        ],
+        "time_of_day_between": [
+          "06:00",
+          "09:00"
+        ]
+      },
+      "advertiser": "Breakfast F&B",
+      "priority": 5,
+      "message_template": "Foggy morning outside\u2014warm up with breakfast specials. Get a free pastry with coffee before 9 AM."
+    }
+  ],
+  "ad_models": {
+    "pay_per_trigger": {
+      "unit_price_usd": 10,
+      "example_budget": 1000,
+      "triggers_allowed": 100
+    },
+    "priority_bidding": {
+      "description": "Future enhancement: advertisers can bid higher to increase frequency/visibility."
+    }
+  },
+  "billing_and_credit": {
+    "advertiser_account_schema": {
+      "advertiser_id": "string",
+      "display_name": "string",
+      "credit_balance_usd": "number",
+      "spent_usd": "number",
+      "budget_cap_usd": "number",
+      "status": "active|paused|exhausted"
+    },
+    "deduction_logic": "On each successful trigger, deduct unit_price from credit_balance; if balance insufficient, fall back to generic ad."
+  },
+  "cms_features": [
+    "Trigger configuration editor (map condition_rules to advertisers)",
+    "Advertiser credit dashboard",
+    "Playback scheduler (time-based or event-driven)",
+    "Fallback ad assignment",
+    "Audit log of every trigger and action"
+  ],
+  "ai_script_generation": {
+    "input": "Structured condition object (temperature, humidity, weather condition, air quality, etc.)",
+    "output": "Natural language script",
+    "template_engine": "Prompt-driven LLM with placeholders and context",
+    "fallback": "Prewritten generic scripts if AI fails"
+  },
+  "voice_synthesis": {
+    "requirements": [
+      "Support for male/female voices",
+      "Sub-5 second generation latency",
+      "SSML-compatible for pacing/emphasis",
+      "Caching for repeated similar scripts"
+    ]
+  },
+  "reporting_metrics": {
+    "advertiser": [
+      "triggers_count",
+      "credits_used",
+      "cost_per_trigger",
+      "ROI_estimate"
+    ],
+    "landlord": [
+      "revenue_share",
+      "impressions",
+      "dwell_time_correlation"
+    ],
+    "system": [
+      "API_uptime",
+      "error_rate",
+      "average_script_latency",
+      "voice_gen_latency"
+    ]
+  },
+  "non_functional_requirements": {
+    "scalability": "Support 500+ concurrent triggers across locations",
+    "reliability": "Automatic retries; cache last good data on upstream failure",
+    "security": [
+      "Secure storage of API keys",
+      "Role-based access control",
+      "Data encryption at rest/in transit"
+    ],
+    "localization": [
+      "English",
+      "Mandarin",
+      "Malay",
+      "Thai"
+    ]
+  },
+  "milestones": [
+    {
+      "name": "API Access",
+      "owner": "Yew Jun",
+      "due_days": 14,
+      "description": "Obtain and validate government data endpoints."
+    },
+    {
+      "name": "Core Pipeline",
+      "owner": "Phu",
+      "due_days": 28,
+      "description": "Build data ingestion \u2192 script generation \u2192 voice synthesis pipeline."
+    },
+    {
+      "name": "CMS & Billing",
+      "owner": "IT Team",
+      "due_days": 35,
+      "description": "Implement trigger engine, credit system, scheduling, logging."
+    },
+    {
+      "name": "Internal Trial",
+      "owner": "IT Team",
+      "due_days": 42,
+      "description": "Test with mock advertisers and fallback behaviors."
+    },
+    {
+      "name": "Pilot Rollout",
+      "owner": "Phu",
+      "due_days": 56,
+      "description": "Deploy in 1\u20132 physical locations and validate end-to-end flow."
+    }
+  ],
+  "api_spec": {
+    "endpoints": [
+      {
+        "path": "/api/v1/fetch-government-data",
+        "method": "GET",
+        "purpose": "Retrieve latest weather/traffic/flood/air quality data",
+        "response_schema_ref": "GovernmentData"
+      },
+      {
+        "path": "/api/v1/evaluate-conditions",
+        "method": "POST",
+        "purpose": "Apply condition_rules to incoming data and decide ad candidate",
+        "payload_example": {
+          "weather": {
+            "temperature_c": 34,
+            "humidity_percent": 70,
+            "condition": "hot"
+          },
+          "air_quality": {
+            "aqi": 120
+          }
+        },
+        "response": {
+          "matched_rule_id": "string",
+          "advertiser_id": "string",
+          "generated_script": "string"
+        }
+      },
+      {
+        "path": "/api/v1/generate-voiceover",
+        "method": "POST",
+        "purpose": "Convert script to audio file",
+        "payload_example": {
+          "script": "string",
+          "voice_gender": "female"
+        },
+        "response": {
+          "audio_url": "string",
+          "duration_sec": "number"
+        }
+      },
+      {
+        "path": "/api/v1/trigger-ad",
+        "method": "POST",
+        "purpose": "Commit a trigger: deduct credit, schedule playback, log event",
+        "payload_example": {
+          "advertiser_id": "string",
+          "rule_id": "string",
+          "location_id": "string",
+          "voiceover_id": "string"
+        },
+        "response": {
+          "status": "success|failure",
+          "remaining_credit": "number"
+        }
+      },
+      {
+        "path": "/api/v1/report",
+        "method": "GET",
+        "purpose": "Retrieve aggregated metrics for advertiser/landlord/system",
+        "query_params": {
+          "type": "advertiser|landlord|system",
+          "date_from": "YYYY-MM-DD",
+          "date_to": "YYYY-MM-DD"
+        }
+      }
+    ]
+  },
+  "data_models": {
+    "GovernmentData": {
+      "timestamp": "ISO8601",
+      "weather": {
+        "temperature_c": "number",
+        "humidity_percent": "number",
+        "condition": "string",
+        "uv_index": "number"
+      },
+      "air_quality": {
+        "aqi": "number",
+        "category": "string"
+      },
+      "flood": {
+        "alert_level": "string",
+        "affected_area": "string"
+      }
+    },
+    "ConditionRule": {
+      "id": "string",
+      "criteria": "object",
+      "advertiser_id": "string",
+      "message_template": "string"
+    },
+    "Script": {
+      "id": "string",
+      "rule_id": "string",
+      "text": "string",
+      "generated_at": "ISO8601"
+    },
+    "Voiceover": {
+      "id": "string",
+      "script_id": "string",
+      "audio_location": "string",
+      "voice_type": "male|female",
+      "duration_sec": "number"
+    },
+    "AdTrigger": {
+      "id": "string",
+      "advertiser_id": "string",
+      "rule_id": "string",
+      "location_id": "string",
+      "timestamp": "ISO8601",
+      "cost_usd": "number"
+    }
+  },
+  "fallback_logic": {
+    "when_credit_exhausted": "Serve generic branding ad and log advertiser as exhausted.",
+    "when_api_failure": "Use last cached government data and flag a warning in system health dashboard."
+  }
+}

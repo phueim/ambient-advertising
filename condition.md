@@ -1,0 +1,368 @@
+# Ambient Advertising AI - Singapore Location-Based Condition Rules
+
+## Overview
+This document outlines all possible location-based conditions that can trigger ambient advertising campaigns in Singapore, focusing on Weather and Traffic conditions across different geographic areas.
+
+## Singapore Geographic Areas
+- **North** (Woodlands, Yishun, Sembawang)
+- **South** (Sentosa, Marina Bay, Harbourfront) 
+- **East** (Changi, Tampines, Pasir Ris)
+- **West** (Jurong, Tuas, Boon Lay)
+- **Central** (CBD, Orchard, City Hall)
+- **Northeast** (Ang Mo Kio, Serangoon)
+- **Northwest** (Choa Chu Kang, Bukit Panjang)
+- **Southeast** (Bedok, Marine Parade)
+- **Southwest** (Clementi, Buona Vista)
+
+## Weather-Based Location Rules
+
+### Temperature + Location Rules
+- `HOT_NORTH` (>32°C in North)
+- `HOT_SOUTH` (>32°C in South)
+- `HOT_EAST` (>32°C in East)
+- `HOT_WEST` (>32°C in West)
+- `HOT_CENTRAL` (>32°C in Central)
+- `HOT_NORTHEAST` (>32°C in Northeast)
+- `HOT_NORTHWEST` (>32°C in Northwest)
+- `HOT_SOUTHEAST` (>32°C in Southeast)
+- `HOT_SOUTHWEST` (>32°C in Southwest)
+- `VERY_HOT_NORTH` (>35°C in North)
+- `VERY_HOT_SOUTH` (>35°C in South)
+- `VERY_HOT_EAST` (>35°C in East)
+- `VERY_HOT_WEST` (>35°C in West)
+- `VERY_HOT_CENTRAL` (>35°C in Central)
+- `VERY_HOT_NORTHEAST` (>35°C in Northeast)
+- `VERY_HOT_NORTHWEST` (>35°C in Northwest)
+- `VERY_HOT_SOUTHEAST` (>35°C in Southeast)
+- `VERY_HOT_SOUTHWEST` (>35°C in Southwest)
+- `WARM_NORTH` (28-32°C in North)
+- `WARM_SOUTH` (28-32°C in South)
+- `WARM_EAST` (28-32°C in East)
+- `WARM_WEST` (28-32°C in West)
+- `WARM_CENTRAL` (28-32°C in Central)
+- `MODERATE_NORTH` (25-28°C in North)
+- `MODERATE_SOUTH` (25-28°C in South)
+- `MODERATE_EAST` (25-28°C in East)
+- `MODERATE_WEST` (25-28°C in West)
+- `MODERATE_CENTRAL` (25-28°C in Central)
+- `COOL_NORTH` (22-25°C in North)
+- `COOL_SOUTH` (22-25°C in South)
+- `COOL_EAST` (22-25°C in East)
+- `COOL_WEST` (22-25°C in West)
+- `COOL_CENTRAL` (22-25°C in Central)
+- `COLD_NORTH` (<22°C in North)
+- `COLD_SOUTH` (<22°C in South)
+- `COLD_EAST` (<22°C in East)
+- `COLD_WEST` (<22°C in West)
+- `COLD_CENTRAL` (<22°C in Central)
+
+### Humidity + Location Rules
+- `HIGH_HUMIDITY_NORTH` (>80% in North)
+- `HIGH_HUMIDITY_SOUTH` (>80% in South)
+- `HIGH_HUMIDITY_EAST` (>80% in East)
+- `HIGH_HUMIDITY_WEST` (>80% in West)
+- `HIGH_HUMIDITY_CENTRAL` (>80% in Central)
+- `MODERATE_HUMIDITY_NORTH` (60-80% in North)
+- `MODERATE_HUMIDITY_SOUTH` (60-80% in South)
+- `MODERATE_HUMIDITY_EAST` (60-80% in East)
+- `MODERATE_HUMIDITY_WEST` (60-80% in West)
+- `MODERATE_HUMIDITY_CENTRAL` (60-80% in Central)
+- `LOW_HUMIDITY_NORTH` (<60% in North)
+- `LOW_HUMIDITY_SOUTH` (<60% in South)
+- `LOW_HUMIDITY_EAST` (<60% in East)
+- `LOW_HUMIDITY_WEST` (<60% in West)
+- `LOW_HUMIDITY_CENTRAL` (<60% in Central)
+
+### Weather Condition + Location Rules
+- `SUNNY_NORTH`
+- `SUNNY_SOUTH`
+- `SUNNY_EAST`
+- `SUNNY_WEST`
+- `SUNNY_CENTRAL`
+- `SUNNY_NORTHEAST`
+- `SUNNY_NORTHWEST`
+- `SUNNY_SOUTHEAST`
+- `SUNNY_SOUTHWEST`
+- `PARTLY_CLOUDY_NORTH`
+- `PARTLY_CLOUDY_SOUTH`
+- `PARTLY_CLOUDY_EAST`
+- `PARTLY_CLOUDY_WEST`
+- `PARTLY_CLOUDY_CENTRAL`
+- `CLOUDY_NORTH`
+- `CLOUDY_SOUTH`
+- `CLOUDY_EAST`
+- `CLOUDY_WEST`
+- `CLOUDY_CENTRAL`
+- `LIGHT_RAIN_NORTH`
+- `LIGHT_RAIN_SOUTH`
+- `LIGHT_RAIN_EAST`
+- `LIGHT_RAIN_WEST`
+- `LIGHT_RAIN_CENTRAL`
+- `MODERATE_RAIN_NORTH`
+- `MODERATE_RAIN_SOUTH`
+- `MODERATE_RAIN_EAST`
+- `MODERATE_RAIN_WEST`
+- `MODERATE_RAIN_CENTRAL`
+- `HEAVY_RAIN_NORTH`
+- `HEAVY_RAIN_SOUTH`
+- `HEAVY_RAIN_EAST`
+- `HEAVY_RAIN_WEST`
+- `HEAVY_RAIN_CENTRAL`
+- `THUNDERSTORM_NORTH`
+- `THUNDERSTORM_SOUTH`
+- `THUNDERSTORM_EAST`
+- `THUNDERSTORM_WEST`
+- `THUNDERSTORM_CENTRAL`
+- `DRIZZLE_NORTH`
+- `DRIZZLE_SOUTH`
+- `DRIZZLE_EAST`
+- `DRIZZLE_WEST`
+- `DRIZZLE_CENTRAL`
+- `HAZE_NORTH`
+- `HAZE_SOUTH`
+- `HAZE_EAST`
+- `HAZE_WEST`
+- `HAZE_CENTRAL`
+
+### Combined Weather + Location Rules
+- `HOT_AND_HUMID_NORTH` (>32°C + >80% humidity in North)
+- `HOT_AND_HUMID_SOUTH` (>32°C + >80% humidity in South)
+- `HOT_AND_HUMID_EAST` (>32°C + >80% humidity in East)
+- `HOT_AND_HUMID_WEST` (>32°C + >80% humidity in West)
+- `HOT_AND_HUMID_CENTRAL` (>32°C + >80% humidity in Central)
+- `HOT_AND_DRY_NORTH` (>32°C + <60% humidity in North)
+- `HOT_AND_DRY_SOUTH` (>32°C + <60% humidity in South)
+- `HOT_AND_DRY_EAST` (>32°C + <60% humidity in East)
+- `HOT_AND_DRY_WEST` (>32°C + <60% humidity in West)
+- `HOT_AND_DRY_CENTRAL` (>32°C + <60% humidity in Central)
+- `COLD_AND_RAINY_NORTH` (<25°C + Rain in North)
+- `COLD_AND_RAINY_SOUTH` (<25°C + Rain in South)
+- `COLD_AND_RAINY_EAST` (<25°C + Rain in East)
+- `COLD_AND_RAINY_WEST` (<25°C + Rain in West)
+- `COLD_AND_RAINY_CENTRAL` (<25°C + Rain in Central)
+- `COOL_AND_WET_NORTH` (<28°C + Rain/Drizzle in North)
+- `COOL_AND_WET_SOUTH` (<28°C + Rain/Drizzle in South)
+- `COOL_AND_WET_EAST` (<28°C + Rain/Drizzle in East)
+- `COOL_AND_WET_WEST` (<28°C + Rain/Drizzle in West)
+- `COOL_AND_WET_CENTRAL` (<28°C + Rain/Drizzle in Central)
+
+## Traffic-Based Location Rules
+
+### Congestion + Location Rules
+- `LOW_TRAFFIC_NORTH`
+- `LOW_TRAFFIC_SOUTH`
+- `LOW_TRAFFIC_EAST`
+- `LOW_TRAFFIC_WEST`
+- `LOW_TRAFFIC_CENTRAL`
+- `MODERATE_TRAFFIC_NORTH`
+- `MODERATE_TRAFFIC_SOUTH`
+- `MODERATE_TRAFFIC_EAST`
+- `MODERATE_TRAFFIC_WEST`
+- `MODERATE_TRAFFIC_CENTRAL`
+- `HIGH_TRAFFIC_NORTH`
+- `HIGH_TRAFFIC_SOUTH`
+- `HIGH_TRAFFIC_EAST`
+- `HIGH_TRAFFIC_WEST`
+- `HIGH_TRAFFIC_CENTRAL`
+- `SEVERE_TRAFFIC_NORTH`
+- `SEVERE_TRAFFIC_SOUTH`
+- `SEVERE_TRAFFIC_EAST`
+- `SEVERE_TRAFFIC_WEST`
+- `SEVERE_TRAFFIC_CENTRAL`
+- `TRAFFIC_JAM_NORTH`
+- `TRAFFIC_JAM_SOUTH`
+- `TRAFFIC_JAM_EAST`
+- `TRAFFIC_JAM_WEST`
+- `TRAFFIC_JAM_CENTRAL`
+
+### ERP + Location Rules
+- `ERP_ACTIVE_CENTRAL`
+- `ERP_INACTIVE_CENTRAL`
+- `ERP_PEAK_HOURS_CENTRAL`
+- `ERP_OFF_PEAK_CENTRAL`
+
+### Time-Based Traffic + Location Rules
+- `MORNING_PEAK_NORTH` (7:00-9:30 AM weekdays in North)
+- `MORNING_PEAK_SOUTH` (7:00-9:30 AM weekdays in South)
+- `MORNING_PEAK_EAST` (7:00-9:30 AM weekdays in East)
+- `MORNING_PEAK_WEST` (7:00-9:30 AM weekdays in West)
+- `MORNING_PEAK_CENTRAL` (7:00-9:30 AM weekdays in Central)
+- `EVENING_PEAK_NORTH` (5:30-8:00 PM weekdays in North)
+- `EVENING_PEAK_SOUTH` (5:30-8:00 PM weekdays in South)
+- `EVENING_PEAK_EAST` (5:30-8:00 PM weekdays in East)
+- `EVENING_PEAK_WEST` (5:30-8:00 PM weekdays in West)
+- `EVENING_PEAK_CENTRAL` (5:30-8:00 PM weekdays in Central)
+- `LUNCH_PEAK_NORTH` (12:00-2:00 PM weekdays in North)
+- `LUNCH_PEAK_SOUTH` (12:00-2:00 PM weekdays in South)
+- `LUNCH_PEAK_EAST` (12:00-2:00 PM weekdays in East)
+- `LUNCH_PEAK_WEST` (12:00-2:00 PM weekdays in West)
+- `LUNCH_PEAK_CENTRAL` (12:00-2:00 PM weekdays in Central)
+- `OFF_PEAK_HOURS_NORTH`
+- `OFF_PEAK_HOURS_SOUTH`
+- `OFF_PEAK_HOURS_EAST`
+- `OFF_PEAK_HOURS_WEST`
+- `OFF_PEAK_HOURS_CENTRAL`
+- `WEEKEND_TRAFFIC_NORTH`
+- `WEEKEND_TRAFFIC_SOUTH`
+- `WEEKEND_TRAFFIC_EAST`
+- `WEEKEND_TRAFFIC_WEST`
+- `WEEKEND_TRAFFIC_CENTRAL`
+- `PUBLIC_HOLIDAY_TRAFFIC_NORTH`
+- `PUBLIC_HOLIDAY_TRAFFIC_SOUTH`
+- `PUBLIC_HOLIDAY_TRAFFIC_EAST`
+- `PUBLIC_HOLIDAY_TRAFFIC_WEST`
+- `PUBLIC_HOLIDAY_TRAFFIC_CENTRAL`
+
+### Specific Location Traffic Rules
+- `CBD_CONGESTION` (Central Business District)
+- `EXPRESSWAY_CONGESTION_NORTH_SOUTH`
+- `EXPRESSWAY_CONGESTION_EAST_WEST`
+- `SHOPPING_DISTRICT_TRAFFIC_ORCHARD`
+- `SHOPPING_DISTRICT_TRAFFIC_EAST` (Tampines, Bedok)
+- `SHOPPING_DISTRICT_TRAFFIC_WEST` (Jurong, Clementi)
+- `SHOPPING_DISTRICT_TRAFFIC_NORTH` (Woodlands, Yishun)
+- `AIRPORT_TRAFFIC_EAST` (Changi Airport area)
+- `BORDER_TRAFFIC_NORTH` (Malaysia-Singapore border)
+
+## Complex Combined Weather + Traffic + Location Rules
+
+### Weather + Traffic + Time + Location
+- `HOT_MORNING_PEAK_CENTRAL`
+- `HOT_MORNING_PEAK_NORTH`
+- `HOT_MORNING_PEAK_SOUTH`
+- `HOT_MORNING_PEAK_EAST`
+- `HOT_MORNING_PEAK_WEST`
+- `RAINY_EVENING_PEAK_CENTRAL`
+- `RAINY_EVENING_PEAK_NORTH`
+- `RAINY_EVENING_PEAK_SOUTH`
+- `RAINY_EVENING_PEAK_EAST`
+- `RAINY_EVENING_PEAK_WEST`
+- `SUNNY_HIGH_TRAFFIC_CENTRAL`
+- `SUNNY_HIGH_TRAFFIC_NORTH`
+- `SUNNY_HIGH_TRAFFIC_SOUTH`
+- `SUNNY_HIGH_TRAFFIC_EAST`
+- `SUNNY_HIGH_TRAFFIC_WEST`
+- `THUNDERSTORM_SEVERE_TRAFFIC_CENTRAL`
+- `THUNDERSTORM_SEVERE_TRAFFIC_NORTH`
+- `THUNDERSTORM_SEVERE_TRAFFIC_SOUTH`
+- `THUNDERSTORM_SEVERE_TRAFFIC_EAST`
+- `THUNDERSTORM_SEVERE_TRAFFIC_WEST`
+- `HOT_AND_HUMID_TRAFFIC_JAM_CBD`
+- `HOT_AND_HUMID_TRAFFIC_JAM_NORTH`
+- `HOT_AND_HUMID_TRAFFIC_JAM_SOUTH`
+- `HOT_AND_HUMID_TRAFFIC_JAM_EAST`
+- `HOT_AND_HUMID_TRAFFIC_JAM_WEST`
+- `COLD_AND_RAINY_WEEKEND_TRAFFIC_CENTRAL`
+- `COLD_AND_RAINY_WEEKEND_TRAFFIC_NORTH`
+- `COLD_AND_RAINY_WEEKEND_TRAFFIC_SOUTH`
+- `COLD_AND_RAINY_WEEKEND_TRAFFIC_EAST`
+- `COLD_AND_RAINY_WEEKEND_TRAFFIC_WEST`
+
+### Shopping/Commercial Area Specific Rules
+- `HOT_HIGH_TRAFFIC_ORCHARD`
+- `HOT_HIGH_TRAFFIC_TAMPINES`
+- `HOT_HIGH_TRAFFIC_JURONG`
+- `HOT_HIGH_TRAFFIC_WOODLANDS`
+- `RAINY_MODERATE_TRAFFIC_SHOPPING_EAST`
+- `RAINY_MODERATE_TRAFFIC_SHOPPING_WEST`
+- `RAINY_MODERATE_TRAFFIC_SHOPPING_NORTH`
+- `RAINY_MODERATE_TRAFFIC_SHOPPING_CENTRAL`
+- `SUNNY_WEEKEND_TRAFFIC_EAST_MALLS`
+- `SUNNY_WEEKEND_TRAFFIC_WEST_MALLS`
+- `SUNNY_WEEKEND_TRAFFIC_NORTH_MALLS`
+- `SUNNY_WEEKEND_TRAFFIC_CENTRAL_MALLS`
+- `HOT_AND_HUMID_PEAK_HOURS_CENTRAL_SHOPPING`
+- `HOT_AND_HUMID_PEAK_HOURS_EAST_SHOPPING`
+- `HOT_AND_HUMID_PEAK_HOURS_WEST_SHOPPING`
+- `HOT_AND_HUMID_PEAK_HOURS_NORTH_SHOPPING`
+
+### Airport/Border Specific Rules
+- `HOT_AIRPORT_TRAFFIC_EAST`
+- `RAINY_AIRPORT_TRAFFIC_EAST`
+- `SUNNY_AIRPORT_TRAFFIC_EAST`
+- `THUNDERSTORM_AIRPORT_TRAFFIC_EAST`
+- `HIGH_TRAFFIC_BORDER_NORTH`
+- `MODERATE_TRAFFIC_BORDER_NORTH`
+- `SEVERE_TRAFFIC_BORDER_NORTH`
+- `RAINY_BORDER_TRAFFIC_NORTH`
+- `SUNNY_BORDER_TRAFFIC_NORTH`
+- `THUNDERSTORM_BORDER_TRAFFIC_NORTH`
+
+### Expressway Specific Rules
+- `HOT_EXPRESSWAY_CONGESTION_NORTH_SOUTH`
+- `HOT_EXPRESSWAY_CONGESTION_EAST_WEST`
+- `RAINY_EXPRESSWAY_TRAFFIC_NORTH_SOUTH`
+- `RAINY_EXPRESSWAY_TRAFFIC_EAST_WEST`
+- `THUNDERSTORM_EXPRESSWAY_TRAFFIC_NORTH_SOUTH`
+- `THUNDERSTORM_EXPRESSWAY_TRAFFIC_EAST_WEST`
+- `PEAK_HOURS_EXPRESSWAY_CENTRAL`
+- `WEEKEND_EXPRESSWAY_TRAFFIC_NORTH_SOUTH`
+- `WEEKEND_EXPRESSWAY_TRAFFIC_EAST_WEST`
+
+### Comfort and Behavior Targeting Rules
+- `INDOOR_ATTRACTION_NORTH` (Hot + Humid + Peak hours in North)
+- `INDOOR_ATTRACTION_SOUTH` (Hot + Humid + Peak hours in South)
+- `INDOOR_ATTRACTION_EAST` (Hot + Humid + Peak hours in East)
+- `INDOOR_ATTRACTION_WEST` (Hot + Humid + Peak hours in West)
+- `INDOOR_ATTRACTION_CENTRAL` (Hot + Humid + Peak hours in Central)
+- `WEATHER_ESCAPE_NORTH` (Heavy rain + Cold + Weekend in North)
+- `WEATHER_ESCAPE_SOUTH` (Heavy rain + Cold + Weekend in South)
+- `WEATHER_ESCAPE_EAST` (Heavy rain + Cold + Weekend in East)
+- `WEATHER_ESCAPE_WEST` (Heavy rain + Cold + Weekend in West)
+- `WEATHER_ESCAPE_CENTRAL` (Heavy rain + Cold + Weekend in Central)
+- `COOLING_NEEDED_NORTH` (Very hot + High humidity in North)
+- `COOLING_NEEDED_SOUTH` (Very hot + High humidity in South)
+- `COOLING_NEEDED_EAST` (Very hot + High humidity in East)
+- `COOLING_NEEDED_WEST` (Very hot + High humidity in West)
+- `COOLING_NEEDED_CENTRAL` (Very hot + High humidity in Central)
+- `EXTENDED_STAY_NORTH` (Rainy + Weekend + Moderate traffic in North)
+- `EXTENDED_STAY_SOUTH` (Rainy + Weekend + Moderate traffic in South)
+- `EXTENDED_STAY_EAST` (Rainy + Weekend + Moderate traffic in East)
+- `EXTENDED_STAY_WEST` (Rainy + Weekend + Moderate traffic in West)
+- `EXTENDED_STAY_CENTRAL` (Rainy + Weekend + Moderate traffic in Central)
+- `IMPULSE_OPPORTUNITY_ORCHARD` (Hot + Humid + High traffic + Shopping district)
+- `IMPULSE_OPPORTUNITY_EAST_SHOPPING` (Hot + Humid + High traffic + Shopping district)
+- `IMPULSE_OPPORTUNITY_WEST_SHOPPING` (Hot + Humid + High traffic + Shopping district)
+- `IMPULSE_OPPORTUNITY_NORTH_SHOPPING` (Hot + Humid + High traffic + Shopping district)
+- `COMFORT_SEEKING_CENTRAL_MALL` (Cold + Wet + Peak hours + Mall location)
+- `COMFORT_SEEKING_EAST_MALL` (Cold + Wet + Peak hours + Mall location)
+- `COMFORT_SEEKING_WEST_MALL` (Cold + Wet + Peak hours + Mall location)
+- `COMFORT_SEEKING_NORTH_MALL` (Cold + Wet + Peak hours + Mall location)
+
+## Specific Singapore CBD Rules
+- `HOT_CBD_MORNING_PEAK`
+- `HOT_CBD_LUNCH_PEAK`
+- `HOT_CBD_EVENING_PEAK`
+- `RAINY_CBD_MORNING_PEAK`
+- `RAINY_CBD_LUNCH_PEAK`
+- `RAINY_CBD_EVENING_PEAK`
+- `HOT_AND_HUMID_CBD_LUNCH_PEAK`
+- `HOT_AND_HUMID_CBD_MORNING_PEAK`
+- `HOT_AND_HUMID_CBD_EVENING_PEAK`
+- `THUNDERSTORM_CBD_HIGH_TRAFFIC`
+- `SUNNY_CBD_WEEKEND`
+- `CLOUDY_CBD_PEAK_HOURS`
+
+## Regional Shopping District Rules
+- `HOT_ORCHARD_WEEKEND`
+- `HOT_ORCHARD_PEAK_HOURS`
+- `RAINY_TAMPINES_EVENING`
+- `RAINY_TAMPINES_WEEKEND`
+- `SUNNY_JURONG_AFTERNOON`
+- `SUNNY_JURONG_WEEKEND`
+- `HOT_AND_HUMID_MARINA_PEAK`
+- `HOT_AND_HUMID_MARINA_WEEKEND`
+- `THUNDERSTORM_WOODLANDS_EVENING`
+- `COOL_AND_WET_CLEMENTI_WEEKEND`
+
+## Transport Hub Rules
+- `HOT_CHANGI_MORNING`
+- `HOT_CHANGI_EVENING`
+- `RAINY_CHANGI_PEAK_HOURS`
+- `SUNNY_CHANGI_WEEKEND`
+- `RAINY_WOODLANDS_BORDER_PEAK`
+- `HOT_WOODLANDS_BORDER_PEAK`
+- `THUNDERSTORM_TUAS_EVENING`
+- `SUNNY_TUAS_WEEKEND`
+- `SUNNY_HARBOURFRONT_WEEKEND`
+- `RAINY_HARBOURFRONT_PEAK`

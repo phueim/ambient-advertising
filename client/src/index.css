@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 0 10% 15%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 0 10% 15%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 10% 15%;
+  
+  --primary: 350 80% 33%;
+  --primary-foreground: 0 0% 98%;
+  
+  --secondary: 0 59% 45%;
+  --secondary-foreground: 0 0% 98%;
+  
+  --muted: 0 10% 96.1%;
+  --muted-foreground: 0 10% 46.9%;
+  
+  --accent: 350 30% 94%;
+  --accent-foreground: 350 80% 33%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  
+  --border: 0 10% 91.4%;
+  --input: 0 10% 91.4%;
+  --ring: 350 80% 33%;
+  
+  --radius: 0.5rem;
+  
+  /* Sidebar specific */
+  --sidebar-background: 0 0% 12%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 350 80% 33%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 18%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 0 0% 20%;
+  --sidebar-ring: 350 80% 33%;
+  
+  /* Chart colors */
+  --chart-1: 350 80% 33%;
+  --chart-2: 0 59% 45%;
+  --chart-3: 340 80% 45%;
+  --chart-4: 15 80% 50%;
+  --chart-5: 330 70% 42%;
+}
+
+.dark {
+  --background: 215 35% 10%;
+  --foreground: 210 40% 98%;
+  
+  --card: 215 35% 16%;
+  --card-foreground: 210 40% 98%;
+  
+  --popover: 215 35% 16%;
+  --popover-foreground: 210 40% 98%;
+  
+  --primary: 200 85% 45%;
+  --primary-foreground: 210 40% 98%;
+  
+  --secondary: 25 95% 53%;
+  --secondary-foreground: 210 40% 98%;
+  
+  --muted: 215 35% 25%;
+  --muted-foreground: 210 40% 90%;
+  
+  --accent: 200 70% 34%;
+  --accent-foreground: 210 40% 98%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  
+  --border: 215 35% 25%;
+  --input: 215 35% 25%;
+  --ring: 200 85% 45%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom styles for dashboard */
+.sidebar-active {
+  @apply font-medium;
+}
+
+/* Ensure sidebar covers full viewport height */
+.sidebar-full-height {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+/* Force full height on sidebar */
+.sidebar-force-height {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  width: 18rem !important; /* 72 in Tailwind = 18rem */
+}
+
+.main-content {
+  @apply bg-background dark:bg-background;
+}
+
+/* Main content area with sidebar offset */
+.content-with-sidebar {
+  margin-left: 18rem; /* Same as sidebar width */
+  min-height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .content-with-sidebar {
+    margin-left: 0;
+  }
+}
+
+.dashboard-card {
+  @apply rounded-xl shadow-md bg-white dark:bg-card p-6 border border-gray-100 dark:border-gray-800;
+}
+
+/* Card style variations */
+.dashboard-card-primary {
+  @apply bg-primary/10 dark:bg-primary/20 border-primary/20;
+}
+
+.dashboard-card-secondary {
+  @apply bg-secondary/10 dark:bg-secondary/20 border-secondary/20;
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary))/0.8 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--secondary))/0.8 100%);
+}
+
+/* USEA specific styles to match screenshot */
+.usea-table {
+  @apply w-full border-collapse;
+}
+
+.usea-table th {
+  @apply bg-primary text-primary-foreground p-3 text-left font-medium text-sm;
+}
+
+.usea-table td {
+  @apply p-3 border-b border-gray-200;
+}
+
+.status-online {
+  @apply w-3 h-3 rounded-full bg-green-500;
+}
+
+.status-offline {
+  @apply w-3 h-3 rounded-full bg-red-500;
+}
+
+.status-partial {
+  @apply w-3 h-3 rounded-full bg-yellow-500;
+}
